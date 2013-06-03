@@ -1,12 +1,17 @@
 {
   "name": "dmCreator",
-  "version": "0.0.0",
-  "description": "Create datamatrix tags",
+  "version": "0.0.1",
+  "description": "Create datamatrix tags, wrapper around libdmtx.",
+  "keywords": "datamatrix",
+  "homepage": "https://github.com/GuillaumeZuff/dmCreator",
   "main": "build/Release/dmCreator.node",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": "",
-  "author": "",
+  "author": {
+      "name": "Guillaume Zufferey",
+      "email": "guillaume@simpliquity.com"
+  },
   "license": "BSD"
 }
