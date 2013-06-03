@@ -1,5 +1,5 @@
 {
-  "name": "dmCreator",
+  "name": "dmcreator",
   "version": "0.0.1",
   "description": "Create datamatrix tags, wrapper around libdmtx.",
   "keywords": "datamatrix",
