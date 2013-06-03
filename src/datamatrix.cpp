@@ -49,7 +49,7 @@ bool DataMatrix::generate() {
 	int height = dmtxImageGetProp(dm->image, DmtxPropHeight);
 	int bytesPerPixel = dmtxImageGetProp(dm->image, DmtxPropBytesPerPixel);
 
-    cout << "DataMatrix: "<<width<<" "<<height<<" "<<bytesPerPixel<<endl;
+    //cout << "DataMatrix: "<<width<<" "<<height<<" "<<bytesPerPixel<<endl;
 
 	Mat img(width, height, CV_8UC3);
 
@@ -67,7 +67,7 @@ bool DataMatrix::generate() {
 	m_filename = getFilename();
     string path = getPath(m_filename);
 
-    cout << "DataMatrix: "<<"writing to "<<path<<endl;
+    //cout << "DataMatrix: "<<"writing to "<<path<<endl;
 
 	return imwrite(path, img);
 }
