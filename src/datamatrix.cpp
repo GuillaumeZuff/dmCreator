@@ -76,6 +76,8 @@ bool DataMatrix::decode(const std::string &filePath, std::string &decodedText) {
     decodedText = "blah";
     cv::Mat frame = imread(filePath);
 
+    cout<<"Decoding..."<<" from: "<<filePath<<endl;
+
     // 1) create dmtx image structure
     DmtxImage *dmtxImage;
     if (frame.channels() == 1) {
@@ -83,7 +85,7 @@ bool DataMatrix::decode(const std::string &filePath, std::string &decodedText) {
                             frame.rows, DmtxPack8bppK);
     } else if (frame.channels() == 3) {
             dmtxImage = dmtxImageCreate((unsigned char*) frame.data, frame.cols,
-                            frame.rows, DmtxPack8bppK);
+                            frame.rows, DmtxPack24bppRGB);
     } else {
             cout << "DataMatrixReader: image format unknown" << endl;
             return false;
@@ -110,7 +112,7 @@ bool DataMatrix::decode(const std::string &filePath, std::string &decodedText) {
 
     // 5) search for next region
     bool messageFound = false;
-    DmtxTime time = dmtxTimeAdd(dmtxTimeNow(), 40);
+    DmtxTime time = dmtxTimeAdd(dmtxTimeNow(), 400);
     DmtxRegion *region = dmtxRegionFindNext(dmtxDecode, &time);
     if (region != NULL) {
             DmtxMessage *message = dmtxDecodeMatrixRegion(dmtxDecode, region,
@@ -127,9 +129,6 @@ bool DataMatrix::decode(const std::string &filePath, std::string &decodedText) {
     dmtxImageDestroy(&dmtxImage);
 
     return messageFound;
-
-
-    return false;
 }
 
 std::string DataMatrix::pathToFile() const {
