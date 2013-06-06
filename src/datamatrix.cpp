@@ -72,6 +72,66 @@ bool DataMatrix::generate() {
 	return imwrite(path, img);
 }
 
+bool DataMatrix::decode(const std::string &filePath, std::string &decodedText) {
+    decodedText = "blah";
+    cv::Mat frame = imread(filePath);
+
+    // 1) create dmtx image structure
+    DmtxImage *dmtxImage;
+    if (frame.channels() == 1) {
+            dmtxImage = dmtxImageCreate((unsigned char*) frame.data, frame.cols,
+                            frame.rows, DmtxPack8bppK);
+    } else if (frame.channels() == 3) {
+            dmtxImage = dmtxImageCreate((unsigned char*) frame.data, frame.cols,
+                            frame.rows, DmtxPack8bppK);
+    } else {
+            cout << "DataMatrixReader: image format unknown" << endl;
+            return false;
+    }
+
+    // 2) set dmtx image properties
+    if (dmtxImageSetProp(dmtxImage, DmtxPropChannelCount,
+                    frame.channels()) == DmtxFail) {
+            cout << "DataMatrixReader: "
+                            << "can't set image property DmtxPropChannelCount" << endl;
+            return false;
+    }
+    if (dmtxImageSetProp(dmtxImage, DmtxPropRowSizeBytes,
+                    frame.step) == DmtxFail) {
+            cout << "DataMatrixReader: "
+                            << "can't set image property DmtxPropRowSizeBytes" << endl;
+            return false;
+    }
+
+    // 3) create dmtx decode matrix
+    DmtxDecode *dmtxDecode = dmtxDecodeCreate(dmtxImage, 1);
+
+    // 4) optional: set dmtx decode properties
+
+    // 5) search for next region
+    bool messageFound = false;
+    DmtxTime time = dmtxTimeAdd(dmtxTimeNow(), 40);
+    DmtxRegion *region = dmtxRegionFindNext(dmtxDecode, &time);
+    if (region != NULL) {
+            DmtxMessage *message = dmtxDecodeMatrixRegion(dmtxDecode, region,
+                            DmtxUndefined);
+            if (message != NULL) { // message found!
+                    decodedText = string((char*) message->output);
+                    messageFound = true;
+                    dmtxMessageDestroy(&message);
+            }
+            dmtxRegionDestroy(&region);
+    }
+
+    dmtxDecodeDestroy(&dmtxDecode);
+    dmtxImageDestroy(&dmtxImage);
+
+    return messageFound;
+
+
+    return false;
+}
+
 std::string DataMatrix::pathToFile() const {
     return getPath(m_filename);
 }

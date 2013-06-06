@@ -9,6 +9,7 @@ class DataMatrix {
 		void setData(const std::string &data);
 
 		bool generate();
+                bool decode(const std::string &filePath, std::string &decodedText);
 
 		std::string pathToFile() const;
 

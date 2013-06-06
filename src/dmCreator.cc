@@ -55,8 +55,30 @@ Handle<Value> CreateDm(const Arguments &args) {
 	return scope.Close(result);
 }
 
+Handle<Value> DecodeDm(const Arguments &args) {
+    HandleScope scope;
+    DataMatrix dm;
+
+    bool done=false;
+    string decodedText;
+
+    if (args[0]->IsObject()) {
+        Local<Object> obj = Local<Object>::Cast(args[0]);
+        if (obj->Has(String::New("path"))) {
+            string path = getString(obj, "path");
+            done = dm.decode(path, decodedText);
+        }
+    }
+
+    Local<Object> result = Object::New();
+    result->Set(String::New("success"), Boolean::New(done));
+    result->Set(String::New("text"), String::New(decodedText.c_str()));
+    return scope.Close(result);
+}
+
 void Init(Handle<Object> exports) {
 	exports->Set(String::NewSymbol("generateDm"), FunctionTemplate::New(CreateDm)->GetFunction());
+        exports->Set(String::NewSymbol("decodeDm"), FunctionTemplate::New(DecodeDm)->GetFunction());
 }
 
 NODE_MODULE(dmCreator, Init)
