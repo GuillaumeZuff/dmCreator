@@ -32,7 +32,7 @@ std::string getFilename() {
 	stringstream name;
 	name << "dm" << timeinfo->tm_hour << timeinfo->tm_min << timeinfo->tm_sec;
 	name << "_" <<  rand();
-	name << ".png";
+	name << ".jpg";
 	return name.str();
 }
 
@@ -67,7 +67,7 @@ bool DataMatrix::generate() {
 	m_filename = getFilename();
     string path = getPath(m_filename);
 
-    //cout << "DataMatrix: "<<"writing to "<<path<<endl;
+    cout << "DataMatrix: "<<"writing to "<<path<<endl;
 
 	return imwrite(path, img);
 }
