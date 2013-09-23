@@ -44,26 +44,25 @@ bool DataMatrix::generate(dm_data &result) {
     result.width = width;
     result.height = height;
     result.channels = bytesPerPixel;
-    result.pixels = vector<char>(width*height*bytesPerPixel);
+    result.pixels = vector<unsigned char>(width*height*bytesPerPixel);
 
     //cout << "DataMatrix: "<<width<<" "<<height<<" "<<bytesPerPixel<<endl;
 
     Mat img(width, height, CV_8UC3);
 
-    int val,index=0;
-    Mat_<Vec3b>& ptr = (Mat_<Vec3b>&)img;
+    int index=0;
+    int val;
     for (int i=0; i<width; i++) {
         for (int j=0; j<height; j++) {
             for (int k=0; k<bytesPerPixel; k++) {
                 dmtxImageGetPixelValue(dm->image,j,i,k,&val);
-                ptr(height-i-1,j)[k] = val;
                 result.pixels[index] = val;
                 index++;
             }
         }
     }
 
-    cout << "Datamatrix: size: "<<width<<" "<<height<<" "<<bytesPerPixel<<endl;
+    //cout << "Datamatrix: size: "<<width<<" "<<height<<" "<<bytesPerPixel<<endl;
 
     return true;
 }

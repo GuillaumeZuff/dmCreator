@@ -5,7 +5,7 @@ struct dm_data {
     int width;
     int height;
     int channels;
-    std::vector<char> pixels;
+    std::vector<unsigned char> pixels;
 };
 
 class DataMatrix {
@@ -13,7 +13,6 @@ public:
     DataMatrix();
     ~DataMatrix();
 
-    void setPath(const std::string &path);
     void setData(const std::string &data);
 
     bool generate(dm_data &result);
