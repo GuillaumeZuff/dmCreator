@@ -9,15 +9,11 @@
 using namespace std;
 using namespace cv;
 
-DataMatrix::DataMatrix(): m_path(), m_filename(), m_data() {
+DataMatrix::DataMatrix(): m_filename(), m_data() {
 	srand(time(NULL));
 }
 
 DataMatrix::~DataMatrix() {
-}
-
-void DataMatrix::setPath(const std::string &path) {
-	m_path = path;
 }
 
 void DataMatrix::setData(const std::string &data) {
@@ -25,51 +21,51 @@ void DataMatrix::setData(const std::string &data) {
 }
 
 std::string getFilename() {
-	time_t rawtime;
-	struct tm *timeinfo;
-	time(&rawtime);
-	timeinfo = localtime(&rawtime);
-	stringstream name;
-	name << "dm" << timeinfo->tm_hour << timeinfo->tm_min << timeinfo->tm_sec;
-	name << "_" <<  rand();
-	name << ".jpg";
-	return name.str();
+    time_t rawtime;
+    struct tm *timeinfo;
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    stringstream name;
+    name << "dm" << timeinfo->tm_hour << timeinfo->tm_min << timeinfo->tm_sec;
+    name << "_" <<  rand();
+    name << ".jpg";
+    return name.str();
 }
 
-std::string DataMatrix::getPath(const std::string &filename) const {
-    return m_path+filename;
-}
+bool DataMatrix::generate(dm_data &result) {
+    vector<unsigned char> data(m_data.begin(), m_data.end());
+    DmtxEncode *dm = dmtxEncodeCreate();
+    dmtxEncodeDataMatrix(dm, (int)data.size(), &data[0]);
 
-bool DataMatrix::generate() {
-	vector<unsigned char> data(m_data.begin(), m_data.end());
-	DmtxEncode *dm = dmtxEncodeCreate();
-	dmtxEncodeDataMatrix(dm, (int)data.size(), &data[0]);
+    int width = dmtxImageGetProp(dm->image, DmtxPropWidth);
+    int height = dmtxImageGetProp(dm->image, DmtxPropHeight);
+    int bytesPerPixel = dmtxImageGetProp(dm->image, DmtxPropBytesPerPixel);
 
-	int width = dmtxImageGetProp(dm->image, DmtxPropWidth);
-	int height = dmtxImageGetProp(dm->image, DmtxPropHeight);
-	int bytesPerPixel = dmtxImageGetProp(dm->image, DmtxPropBytesPerPixel);
+    result.width = width;
+    result.height = height;
+    result.channels = bytesPerPixel;
+    result.pixels = vector<char>(width*height*bytesPerPixel);
 
     //cout << "DataMatrix: "<<width<<" "<<height<<" "<<bytesPerPixel<<endl;
 
-	Mat img(width, height, CV_8UC3);
+    Mat img(width, height, CV_8UC3);
 
-	int val;
-	Mat_<Vec3b>& ptr = (Mat_<Vec3b>&)img;
-	for (int i=0; i<width; i++) {
-		for (int j=0; j<height; j++) {
-			for (int k=0; k<bytesPerPixel; k++) {
-				dmtxImageGetPixelValue(dm->image,j,i,k,&val);
-				ptr(height-i-1,j)[k] = val;
-			}
-		}
-	}
+    int val,index=0;
+    Mat_<Vec3b>& ptr = (Mat_<Vec3b>&)img;
+    for (int i=0; i<width; i++) {
+        for (int j=0; j<height; j++) {
+            for (int k=0; k<bytesPerPixel; k++) {
+                dmtxImageGetPixelValue(dm->image,j,i,k,&val);
+                ptr(height-i-1,j)[k] = val;
+                result.pixels[index] = val;
+                index++;
+            }
+        }
+    }
 
-	m_filename = getFilename();
-    string path = getPath(m_filename);
+    cout << "Datamatrix: size: "<<width<<" "<<height<<" "<<bytesPerPixel<<endl;
 
-    cout << "DataMatrix: "<<"writing to "<<path<<endl;
-
-	return imwrite(path, img);
+    return true;
 }
 
 bool DataMatrix::decode(const std::string &filePath, std::string &decodedText) {
@@ -81,28 +77,28 @@ bool DataMatrix::decode(const std::string &filePath, std::string &decodedText) {
     // 1) create dmtx image structure
     DmtxImage *dmtxImage;
     if (frame.channels() == 1) {
-            dmtxImage = dmtxImageCreate((unsigned char*) frame.data, frame.cols,
-                            frame.rows, DmtxPack8bppK);
+        dmtxImage = dmtxImageCreate((unsigned char*) frame.data, frame.cols, frame.rows, DmtxPack8bppK);
     } else if (frame.channels() == 3) {
-            dmtxImage = dmtxImageCreate((unsigned char*) frame.data, frame.cols,
-                            frame.rows, DmtxPack24bppRGB);
+        dmtxImage = dmtxImageCreate((unsigned char*) frame.data, frame.cols, frame.rows, DmtxPack24bppRGB);
     } else {
-            cout << "DataMatrixReader: image format unknown" << endl;
-            return false;
+        cout << "DataMatrixReader: image format unknown" << endl;
+        return false;
     }
 
     // 2) set dmtx image properties
     if (dmtxImageSetProp(dmtxImage, DmtxPropChannelCount,
                     frame.channels()) == DmtxFail) {
-            cout << "DataMatrixReader: "
-                            << "can't set image property DmtxPropChannelCount" << endl;
-            return false;
+        cout << "DataMatrixReader: "
+            << "can't set image property DmtxPropChannelCount"
+            << endl;
+        return false;
     }
     if (dmtxImageSetProp(dmtxImage, DmtxPropRowSizeBytes,
                     frame.step) == DmtxFail) {
-            cout << "DataMatrixReader: "
-                            << "can't set image property DmtxPropRowSizeBytes" << endl;
-            return false;
+        cout << "DataMatrixReader: "
+            << "can't set image property DmtxPropRowSizeBytes"
+            << endl;
+        return false;
     }
 
     // 3) create dmtx decode matrix
@@ -115,14 +111,13 @@ bool DataMatrix::decode(const std::string &filePath, std::string &decodedText) {
     DmtxTime time = dmtxTimeAdd(dmtxTimeNow(), 400);
     DmtxRegion *region = dmtxRegionFindNext(dmtxDecode, &time);
     if (region != NULL) {
-            DmtxMessage *message = dmtxDecodeMatrixRegion(dmtxDecode, region,
-                            DmtxUndefined);
-            if (message != NULL) { // message found!
-                    decodedText = string((char*) message->output);
-                    messageFound = true;
-                    dmtxMessageDestroy(&message);
-            }
-            dmtxRegionDestroy(&region);
+        DmtxMessage *message = dmtxDecodeMatrixRegion(dmtxDecode, region, DmtxUndefined);
+        if (message != NULL) { // message found!
+            decodedText = string((char*) message->output);
+            messageFound = true;
+            dmtxMessageDestroy(&message);
+        }
+        dmtxRegionDestroy(&region);
     }
 
     dmtxDecodeDestroy(&dmtxDecode);

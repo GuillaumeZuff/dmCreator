@@ -37,21 +37,28 @@ Handle<Value> CreateDm(const Arguments &args) {
 	DataMatrix dm;
 
 	if (args[0]->IsObject()) {
-		Local<Object> obj = Local<Object>::Cast(args[0]);
-		if (obj->Has(String::New("path"))) {
-			string path = getString(obj, "path");
-			dm.setPath(path);
-		}
-		if (obj->Has(String::New("data"))) {
-			string data = getString(obj, "data");
-			dm.setData(data);
-		}
+            Local<Object> obj = Local<Object>::Cast(args[0]);
+            if (obj->Has(String::New("data"))) {
+                string data = getString(obj, "data");
+                dm.setData(data);
+            }
 	}
 
-	bool done = dm.generate();
+        dm_data data;
+	bool done = dm.generate(data);
 	Local<Object> result = Object::New();
 	result->Set(String::New("success"), Boolean::New(done));
-    result->Set(String::New("path"), String::New(dm.pathToFile().c_str()));
+        if (done) {
+            result->Set(String::New("width"), Number::New(data.width));
+            result->Set(String::New("height"), Number::New(data.height));
+            result->Set(String::New("channels"), Number::New(data.channels));
+            int nPixels = (int)data.pixels.size();
+            Handle<Array> pixels = Array::New(nPixels);
+            for (int i=0; i<nPixels; ++i) {
+                pixels->Set(i,Integer::New(data.pixels[i]));
+            }
+            result->Set(String::New("pixels"), pixels);
+        }
 	return scope.Close(result);
 }
 
