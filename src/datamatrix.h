@@ -21,9 +21,6 @@ public:
     std::string pathToFile() const;
 
 private:
-    std::string getPath(const std::string &filename) const;
-
-private:
     std::string m_path; // output path
     std::string m_filename;
     std::string m_data;

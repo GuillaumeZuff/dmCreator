@@ -124,7 +124,3 @@ bool DataMatrix::decode(const std::string &filePath, std::string &decodedText) {
 
     return messageFound;
 }
-
-std::string DataMatrix::pathToFile() const {
-    return getPath(m_filename);
-}
