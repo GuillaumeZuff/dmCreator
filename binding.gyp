@@ -4,6 +4,9 @@
     "sources": ["src/dmCreator.cc", "src/datamatrix.cpp"],
 		'conditions': [
 			['OS=="mac"', {
+                "include_dirs": [
+                    "/usr/local/include/"
+                ],
     		"libraries": [
                 "/usr/local/lib/libdmtx.dylib",
         	"/usr/lib/libopencv_core.dylib",
