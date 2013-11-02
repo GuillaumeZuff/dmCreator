@@ -9,8 +9,8 @@
                 ],
     		"libraries": [
                 "/usr/local/lib/libdmtx.dylib",
-        	"/usr/lib/libopencv_core.dylib",
-        	"/usr/lib/libopencv_highgui.dylib"
+        	"/usr/local/lib/libopencv_core.dylib",
+        	"/usr/local/lib/libopencv_highgui.dylib"
     		]
 			}],
 			['OS=="linux"', {
