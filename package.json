@@ -10,8 +10,11 @@
   },
   "repository": "",
   "author": {
-      "name": "Guillaume Zufferey",
-      "email": "guillaume@simpliquity.com"
+    "name": "Guillaume Zufferey",
+    "email": "guillaume@simpliquity.com"
   },
-  "license": "BSD"
+  "license": "BSD",
+  "dependencies": {
+    "nan": "^2.3.3"
+  }
 }
