@@ -8,6 +8,14 @@ struct dm_data {
     std::vector<unsigned char> pixels;
 };
 
+struct dm_image {
+    int cols;
+    int rows;
+    int channels;
+    unsigned char *data;
+};
+
+
 class DataMatrix {
 public:
     DataMatrix();
@@ -15,13 +23,12 @@ public:
 
     void setData(const std::string &data);
 
-    bool generate(dm_data &result);
-    bool decode(const std::string &filePath, std::string &decodedText);
+    bool generate(const std::string &text, dm_data &result);
+    bool decode(const dm_image &image, std::string &decodedText);
 
     std::string pathToFile() const;
 
 private:
     std::string m_path; // output path
     std::string m_filename;
-    std::string m_data;
 };

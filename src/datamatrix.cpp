@@ -2,22 +2,16 @@
 #include <dmtx.h>
 #include <vector>
 #include <iostream>
-#include <opencv2/opencv.hpp>
 #include <ctime>
 #include <sstream>
 
 using namespace std;
-using namespace cv;
 
-DataMatrix::DataMatrix(): m_filename(), m_data() {
+DataMatrix::DataMatrix(): m_filename() {
 	srand(time(NULL));
 }
 
 DataMatrix::~DataMatrix() {
-}
-
-void DataMatrix::setData(const std::string &data) {
-	m_data = data;
 }
 
 std::string getFilename() {
@@ -32,8 +26,8 @@ std::string getFilename() {
     return name.str();
 }
 
-bool DataMatrix::generate(dm_data &result) {
-    vector<unsigned char> data(m_data.begin(), m_data.end());
+bool DataMatrix::generate(const std::string &text, dm_data &result) {
+    vector<unsigned char> data(text.begin(), text.end());
     DmtxEncode *dm = dmtxEncodeCreate();
     dmtxEncodeDataMatrix(dm, (int)data.size(), &data[0]);
 
@@ -47,8 +41,6 @@ bool DataMatrix::generate(dm_data &result) {
     result.pixels = vector<unsigned char>(width*height*bytesPerPixel);
 
     //cout << "DataMatrix: "<<width<<" "<<height<<" "<<bytesPerPixel<<endl;
-
-    Mat img(width, height, CV_8UC3);
 
     int index=0;
     int val;
@@ -67,33 +59,30 @@ bool DataMatrix::generate(dm_data &result) {
     return true;
 }
 
-bool DataMatrix::decode(const std::string &filePath, std::string &decodedText) {
-    decodedText = "blah";
-    cv::Mat frame = imread(filePath);
-
-    cout<<"Decoding..."<<" from: "<<filePath<<endl;
+bool DataMatrix::decode(const dm_image &image, std::string &decodedText) {
+    decodedText = "";
 
     // 1) create dmtx image structure
     DmtxImage *dmtxImage;
-    if (frame.channels() == 1) {
-        dmtxImage = dmtxImageCreate((unsigned char*) frame.data, frame.cols, frame.rows, DmtxPack8bppK);
-    } else if (frame.channels() == 3) {
-        dmtxImage = dmtxImageCreate((unsigned char*) frame.data, frame.cols, frame.rows, DmtxPack24bppRGB);
+    if (image.channels == 1) {
+        dmtxImage = dmtxImageCreate(image.data, image.cols, image.rows, DmtxPack8bppK);
+    } else if (image.channels == 3) {
+        dmtxImage = dmtxImageCreate(image.data, image.cols, image.rows, DmtxPack24bppRGB);
+    } else if (image.channels == 4) {
+        dmtxImage = dmtxImageCreate(image.data, image.cols, image.rows, DmtxPack32bppRGBX);
     } else {
         cout << "DataMatrixReader: image format unknown" << endl;
         return false;
     }
 
     // 2) set dmtx image properties
-    if (dmtxImageSetProp(dmtxImage, DmtxPropChannelCount,
-                    frame.channels()) == DmtxFail) {
+    if (dmtxImageSetProp(dmtxImage, DmtxPropChannelCount, image.channels) == DmtxFail) {
         cout << "DataMatrixReader: "
             << "can't set image property DmtxPropChannelCount"
             << endl;
         return false;
     }
-    if (dmtxImageSetProp(dmtxImage, DmtxPropRowSizeBytes,
-                    frame.step) == DmtxFail) {
+    if (dmtxImageSetProp(dmtxImage, DmtxPropRowSizeBytes, image.channels) == DmtxFail) {
         cout << "DataMatrixReader: "
             << "can't set image property DmtxPropRowSizeBytes"
             << endl;
@@ -124,3 +113,4 @@ bool DataMatrix::decode(const std::string &filePath, std::string &decodedText) {
 
     return messageFound;
 }
+

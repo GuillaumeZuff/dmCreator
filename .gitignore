@@ -2,5 +2,5 @@
 build
 .DS_Store
 *.swp
-*.png
 node_modules
+test/output.png

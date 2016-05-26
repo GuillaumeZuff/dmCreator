@@ -6,7 +6,7 @@
   "homepage": "https://github.com/GuillaumeZuff/dmCreator",
   "main": "build/Release/dmCreator.node",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node_modules/.bin/mocha -w"
   },
   "repository": "",
   "author": {
@@ -16,5 +16,12 @@
   "license": "BSD",
   "dependencies": {
     "nan": "^2.3.3"
+  },
+  "devDependencies": {
+      "mocha": "*",
+      "should": ">= 0.0.1",
+      "get-pixels": "*",
+      "save-pixels": ">= 2.3.3",
+      "ndarray": ">= 1.0.18"
   }
 }
