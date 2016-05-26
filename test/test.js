@@ -23,7 +23,7 @@ describe("encode", function() {
 
 const decodePixels = function (err, pixels) {
     if (err) {
-        err.should.be(null);
+        err.should.be.null();
     } else {
         var data = new Buffer(pixels.data);
         return dmCreator.decodeDm({
@@ -52,12 +52,14 @@ describe("decode", function() {
         var data = new Buffer(encode.pixels);
         var image = ndarray(encode.pixels, [encode.width, encode.height, encode.channels])
         var output = fs.createWriteStream("test/output.png");
-        savePixels(image, "png").pipe(output);
-        getPixels("./test/output.png", function(err, pixels) {
-            const res = decodePixels(err, pixels);
-            res.success.should.be.true();
-            res.text.should.equal("hello");
-            done();
+        var stream = savePixels(image, "png").pipe(output);
+        stream.on("finish", function() {
+            getPixels("./test/output.png", function(err, pixels) {
+                const res = decodePixels(err, pixels);
+                res.success.should.be.true();
+                res.text.should.equal("hello");
+                done();
+            });
         });
     });
 });
