@@ -5,22 +5,16 @@
         "include_dirs" : [
             "<!(node -e \"require('nan')\")"
         ],
+        "libraries": [
+            "-Wl","-rpath","-llibdmtx"
+        ],
         'conditions': [
             ['OS=="mac"', {
                 "include_dirs": [
                     "/usr/local/include/"
                 ],
                 "libraries": [
-                    "/usr/local/lib/libdmtx.dylib",
-                    "/usr/local/lib/libopencv_core.dylib",
-                    "/usr/local/lib/libopencv_highgui.dylib"
-                ]
-            }],
-            ['OS=="linux"', {
-                "libraries": [
-                    "/usr/lib/libdmtx.so",
-                    "/usr/lib/libopencv_core.so",
-                    "/usr/lib/libopencv_highgui.so"
+                    "-L/usr/local/lib"
                 ]
             }],
         ]
