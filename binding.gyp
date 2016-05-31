@@ -14,7 +14,8 @@
                     "/usr/local/include/"
                 ],
                 "libraries": [
-                    "-L/usr/local/lib"
+                    "-L/usr/local/lib",
+                    "libdmtx.dylib"
                 ]
             }],
         ]
