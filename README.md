@@ -4,12 +4,12 @@ node.js package, wrapper around [libdmtx](http://libdmtx.sourceforge.net/) for c
 
 ## Install
 ```
-npm install dmCreator
+npm install dmcreator
 ```
 
 ## Usage
 ```
-const dmCreator = require("dmCreator");
+const dmCreator = require("dmcreator");
 ```
 
 ### Encoding
