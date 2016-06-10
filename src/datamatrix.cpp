@@ -99,7 +99,7 @@ bool DataMatrix::decode(const dm_image &image, std::string &decodedText) {
     DmtxTime time = dmtxTimeAdd(dmtxTimeNow(), 1000);
     DmtxRegion *region = dmtxRegionFindNext(dmtxDecode, &time);
     while ((region != NULL) && !messageFound) {
-        cout << "Testing region..." << region << endl;
+        //cout << "Testing region..." << region << endl;
         DmtxMessage *message = dmtxDecodeMatrixRegion(dmtxDecode, region, DmtxUndefined);
         if (message != NULL) { // message found!
             decodedText = string((char*) message->output);
