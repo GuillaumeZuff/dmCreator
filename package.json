@@ -1,6 +1,6 @@
 {
   "name": "dmcreator",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Create datamatrix tags, wrapper around libdmtx.",
   "keywords": "datamatrix",
   "homepage": "https://github.com/GuillaumeZuff/dmCreator",
