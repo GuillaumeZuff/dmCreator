@@ -29,8 +29,8 @@ const decodePixels = function (err, pixels) {
         return dmCreator.decodeDm({
             cols: pixels.shape[0],
             rows: pixels.shape[1],
-            channels: pixels.shape[2] 
-        }, data);
+            channels: pixels.shape[2]
+        }, data, 100);
     }
 }
 

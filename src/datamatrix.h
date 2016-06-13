@@ -24,7 +24,7 @@ public:
     void setData(const std::string &data);
 
     bool generate(const std::string &text, dm_data &result);
-    bool decode(const dm_image &image, std::string &decodedText);
+    bool decode(const dm_image &image, unsigned int timeout, std::string &decodedText);
 
     std::string pathToFile() const;
 

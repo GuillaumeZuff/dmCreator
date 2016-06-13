@@ -6,6 +6,8 @@
 
 using namespace std;
 
+DataMatrix dm;
+
 template<class T>
 std::vector<T> getArray(const v8::Local<v8::Object> &obj, const std::string &name) {
     std::vector<T> vect;
@@ -33,8 +35,6 @@ std::string getString(const v8::Local<v8::Object> &obj, const std::string &name)
 }
 
 void CreateDm(const Nan::FunctionCallbackInfo<v8::Value>& info) {
-    DataMatrix dm;
-
     if (info[0]->IsObject()) {
         v8::Local<v8::Object> obj = v8::Local<v8::Object>::Cast(info[0]);
         if (obj->Has(Nan::New<v8::String>("data").ToLocalChecked())) {
@@ -61,8 +61,6 @@ void CreateDm(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 }
 
 void DecodeDm(const Nan::FunctionCallbackInfo<v8::Value>& info) {
-    DataMatrix dm;
-
     bool done=false;
     string decodedText;
 
@@ -73,12 +71,11 @@ void DecodeDm(const Nan::FunctionCallbackInfo<v8::Value>& info) {
         image.cols = obj->Get(Nan::New<v8::String>("cols").ToLocalChecked())->NumberValue();
         image.channels = obj->Get(Nan::New<v8::String>("channels").ToLocalChecked())->NumberValue();
         image.data = (unsigned char *) node::Buffer::Data(info[1]->ToObject());
-        done = dm.decode(image, decodedText);
-        //image.data = obj->Get(Nan::New<v8::String>("data"));
-        //if (obj->Has(Nan::New<v8::String>("path").ToLocalChecked())) {
-        //    string path = getString(obj, "path");
-        //    done = dm.decode(path, decodedText);
-        //}
+        unsigned int timeout = 1000;
+        if (info[2]->IsNumber()) {
+            timeout = v8::Local<v8::Number>::Cast(info[2])->NumberValue();
+        }
+        done = dm.decode(image, timeout, decodedText);
     }
 
     v8::Local<v8::Object> result = Nan::New<v8::Object>();
@@ -95,6 +92,7 @@ void Init(v8::Handle<v8::Object> exports) {
      *  - cols
      *  - channels
      * data (pixels)
+     * timeout (optional - default 1000ms)
      */
     Nan::SetMethod(exports, "decodeDm", DecodeDm);
 }

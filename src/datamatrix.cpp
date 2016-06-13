@@ -8,11 +8,10 @@
 using namespace std;
 
 DataMatrix::DataMatrix(): m_filename() {
-	srand(time(NULL));
+    srand(time(NULL));
 }
 
-DataMatrix::~DataMatrix() {
-}
+DataMatrix::~DataMatrix() {}
 
 std::string getFilename() {
     time_t rawtime;
@@ -59,7 +58,7 @@ bool DataMatrix::generate(const std::string &text, dm_data &result) {
     return true;
 }
 
-bool DataMatrix::decode(const dm_image &image, std::string &decodedText) {
+bool DataMatrix::decode(const dm_image &image, unsigned int timeout, std::string &decodedText) {
     decodedText = "";
 
     // 1) create dmtx image structure
@@ -96,7 +95,7 @@ bool DataMatrix::decode(const dm_image &image, std::string &decodedText) {
 
     // 5) search for next region
     bool messageFound = false;
-    DmtxTime time = dmtxTimeAdd(dmtxTimeNow(), 1000);
+    DmtxTime time = dmtxTimeAdd(dmtxTimeNow(), timeout);
     DmtxRegion *region = dmtxRegionFindNext(dmtxDecode, &time);
     while ((region != NULL) && !messageFound) {
         //cout << "Testing region..." << region << endl;
@@ -107,7 +106,7 @@ bool DataMatrix::decode(const dm_image &image, std::string &decodedText) {
             dmtxMessageDestroy(&message);
         }
         dmtxRegionDestroy(&region);
-        time = dmtxTimeAdd(dmtxTimeNow(), 1000);
+        time = dmtxTimeAdd(dmtxTimeNow(), timeout);
         region = dmtxRegionFindNext(dmtxDecode, &time);
     }
 
