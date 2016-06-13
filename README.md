@@ -28,7 +28,7 @@ dmCreator.decodeDm({
   cols: colsCount,
   rows: rowsCount,
   channels: channelsCount 
-}, data)
+}, data, timeout)
 ```
 where data is a [Buffer](https://nodejs.org/api/buffer.html).
 
