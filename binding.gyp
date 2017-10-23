@@ -5,9 +5,6 @@
         "include_dirs" : [
             "<!(node -e \"require('nan')\")"
         ],
-        "libraries": [
-            "-Wl","-rpath","-llibdmtx"
-        ],
         'conditions': [
             ['OS=="mac"', {
                 "include_dirs": [
@@ -18,6 +15,11 @@
                     "libdmtx.dylib"
                 ]
             }],
+            ['OS=="linux"', {
+		"libraries": [
+			"/usr/lib/libdmtx.so"
+		]
+	    }],
         ]
     }],
 }
