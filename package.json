@@ -1,6 +1,6 @@
 {
   "name": "dmcreator",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Create datamatrix tags, wrapper around libdmtx.",
   "keywords": "datamatrix",
   "homepage": "https://github.com/GuillaumeZuff/dmCreator",
@@ -18,10 +18,10 @@
     "nan": "^2.3.3"
   },
   "devDependencies": {
-      "mocha": "*",
-      "should": ">= 0.0.1",
-      "get-pixels": "*",
-      "save-pixels": ">= 2.3.3",
-      "ndarray": ">= 1.0.18"
+    "mocha": "*",
+    "should": ">= 0.0.1",
+    "get-pixels": "*",
+    "save-pixels": ">= 2.3.3",
+    "ndarray": ">= 1.0.18"
   }
 }
