@@ -3,9 +3,12 @@
 node.js package, wrapper around [libdmtx](http://libdmtx.sourceforge.net/) for creating and decoding datamatrix tags.
 
 ## Install
+
+This package depends on [libdmtx](http://libdmtx.sourceforge.net/) being installed and available on your system. You can find instructions on how to install it [here](http://libdmtx.wikidot.com/general-instructions). After that is installed, proceed with...
 ```
 npm install dmcreator
 ```
+Note for OSX users: you can alternatively use `brew install libdmtx`.
 
 ## Usage
 ```
@@ -27,7 +30,7 @@ It returns an object with the following properties:
 dmCreator.decodeDm({
   cols: colsCount,
   rows: rowsCount,
-  channels: channelsCount 
+  channels: channelsCount
 }, data, timeout)
 ```
 where data is a [Buffer](https://nodejs.org/api/buffer.html).
